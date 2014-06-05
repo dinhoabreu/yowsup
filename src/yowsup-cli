@@ -37,8 +37,10 @@ from Yowsup.Registration.v2.existsrequest import WAExistsRequest as WAExistsRequ
 from Yowsup.Registration.v2.coderequest import WACodeRequest as WACodeRequestV2
 from Yowsup.Registration.v2.regrequest import WARegRequest as WARegRequestV2
 from Yowsup.Contacts.contacts import WAContactsSyncRequest
+from Yowsup.Proxy import HTTPProxy
 
 import threading,time, base64
+
 
 DEFAULT_CONFIG = os.path.expanduser("~")+"/.yowsup/auth"
 COUNTRIES_CSV = "countries.csv"
@@ -169,7 +171,7 @@ regGroup = parser.add_argument_group("Registration options")
 
 modes = clientsGroup.add_mutually_exclusive_group()
 modes.add_argument('-l','--listen', help='Listen to messages', action="store_true", required=False, default=False)
-modes.add_argument('-s','--send', help="Send message to phone number and close connection. Phone is full number including country code, without '+' or '00'", action="store",  nargs=2, metavar=('<phone>','<message>'), required=False)
+modes.add_argument('-s','--send', help="Send message to phone number and close connection. Phone is full number including country code, without '+' or '00'", action="store", nargs=2, metavar=('<phone>','<message>'), required=False)
 modes.add_argument('-i','--interactive', help="Start an interactive conversation with a contact. Phone is full number including country code, without '+' or '00'", action="store", metavar='<phone>', required=False)
 modes.add_argument('-b','--broadcast', help="Broadcast message to multiple recepients, comma seperated", action="store", nargs=2, metavar=('<jids>', '<message>'), required=False)
 
@@ -179,7 +181,6 @@ modes.add_argument('-b','--broadcast', help="Broadcast message to multiple recep
 clientsGroup.add_argument('-w','--wait', help='If used with -s, then connection will not close until server confirms reception of the message', action="store_true", required=False, default=False)
 clientsGroup.add_argument('-a','--autoack', help='If used with -l or -i, then a message received ack would be automatically sent for received messages', action="store_true", required=False, default=False)
 clientsGroup.add_argument('-k','--keepalive', help="When used with -l or -i, Yowsup will automatically respond to server's ping requests to keep connection alive", action="store_true", required=False, default=False)
-
 
 regSteps = regGroup.add_mutually_exclusive_group()
 regSteps.add_argument("-r", '--requestcode', help='Request the 3 digit registration code from Whatsapp.', action="store", required=False, metavar="(sms|voice)")
@@ -236,6 +237,8 @@ else:
 					sys.exit("ERROR. Couldn't detect cc, you have to manually place it your config")
 			countryCode, phoneNumber = dissected
 				
+		HTTPProxy.register()
+
 		Debugger.enabled = args['debug']
 
 		if args["ignorecached"]:
@@ -304,7 +307,7 @@ else:
 			print(resultToString(result))
 
 	elif args["dbus"]:
-            startDbusInterface()
+		startDbusInterface()
 	elif args["generatepassword"]:
 		print(Utilities.processIdentity(args["generatepassword"]));
 	elif args["decodestring"]:
