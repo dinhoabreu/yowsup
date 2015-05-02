@@ -10,6 +10,7 @@ class SendLayer(YowInterfaceLayer):
 
     def __init__(self):
         super(SendLayer, self).__init__()
+        YowInterfaceLayer.__init__(self)
         self.ackQueue = []
         self.lock = threading.Condition()
 
