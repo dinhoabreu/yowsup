@@ -12,6 +12,7 @@ from yowsup.layers.logger                      import YowLoggerLayer
 from yowsup.layers.axolotl                     import YowAxolotlLayer
 from yowsup.common import YowConstants
 from yowsup import env
+import sys
 
 class YowsupSendStack(object):
     def __init__(self, credentials, messages, encryptionEnabled = False):
@@ -58,3 +59,7 @@ class YowsupSendStack(object):
             self.stack.loop()
         except AuthError as e:
             print("Authentication Error: %s" % e.message)
+            sys.exit(1)
+        except Exception as e:
+            print("Exception: %s" % e)
+            sys.exit(1)
