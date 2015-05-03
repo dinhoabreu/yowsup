@@ -169,6 +169,12 @@ class YowsupCliLayer(Cli, YowInterfaceLayer):
     ######################################
 
     ####### contacts/ profiles ####################
+    @clicmd("Set status text")
+    def status_set(self, text):
+        if self.assertConnected():
+            entity = SetStatusIqProtocolEntity(text)
+            self.toLower(entity)
+
     @clicmd("Get profile picture for contact")
     def contact_picture(self, jid):
         if self.assertConnected():
@@ -195,9 +201,17 @@ class YowsupCliLayer(Cli, YowInterfaceLayer):
             self.toLower(entity)
 
     @clicmd("Invite to group")
-    def group_invite(self, group_jid, jid):
+    def group_invite(self, group_jid, jids):
         if self.assertConnected():
-            entity = AddParticipantsIqProtocolEntity(self.aliasToJid(group_jid), self.aliasToJid(jid))
+            jids = [self.aliasToJid(jid) for jid in jids.split(',')]
+            entity = AddParticipantsIqProtocolEntity(self.aliasToJid(group_jid), jids)
+            self.toLower(entity)
+
+    @clicmd("Kick from group")
+    def group_kick(self, group_jid, jids):
+        if self.assertConnected():
+            jids = [self.aliasToJid(jid) for jid in jids.split(',')]
+            entity = RemoveParticipantsIqProtocolEntity(self.aliasToJid(group_jid), jids)
             self.toLower(entity)
 
     @clicmd("Get pariticipants in a group")
@@ -376,8 +390,9 @@ class YowsupCliLayer(Cli, YowInterfaceLayer):
 
 
         formattedDate = datetime.datetime.fromtimestamp(message.getTimestamp()).strftime('%d-%m-%Y %H:%M')
+        sender = message.getFrom() if not message.isGroupMessage() else "%s/%s" % (message.getParticipant(False), message.getFrom())
         output = self.__class__.MESSAGE_FORMAT.format(
-            FROM = message.getFrom(),
+            FROM = sender,
             TIME = formattedDate,
             MESSAGE = messageOut.encode('latin-1').decode() if sys.version_info >= (3, 0) else messageOut,
             MESSAGE_ID = message.getId()

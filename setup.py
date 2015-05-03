@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 import yowsup
 import platform
 
-deps = ['python-dateutil', 'argparse', 'python-axolotl>=0.1.1', 'pillow', 'protobuf<3.0']
+deps = ['python-dateutil', 'argparse', 'python-axolotl>=0.1.7', 'pillow']
 
 if platform.system().lower() == "windows":
     deps.append('pyreadline')
@@ -18,7 +18,7 @@ setup(
     name='yowsup2',
     version=yowsup.__version__,
     url='http://github.com/tgalal/yowsup/',
-    license='MIT License',
+    license='GPL-3+',
     author='Tarek Galal',
     tests_require=[],
     install_requires = deps,
@@ -37,7 +37,7 @@ setup(
         'Natural Language :: English',
         #'Environment :: Web Environment',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: MIT License',
+        'License :: OSI Approved ::  GPL-3+  License',
         'Operating System :: OS Independent',
         'Topic :: Software Development :: Libraries :: Python Modules'
         ],
